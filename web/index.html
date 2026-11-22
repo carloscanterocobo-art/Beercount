@@ -21,14 +21,41 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
+  <!-- Registro del Service Worker de Beercount -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          const manifestUrl = new URL(
+            'precache_manifest.json',
+            document.baseURI
+          );
 
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
+          const response = await fetch(manifestUrl, {
+            method: 'HEAD',
+            cache: 'no-store'
+          });
+
+          // Solo registrar el Service Worker en compilaciones de producción.
+          if (response.ok) {
+            const workerUrl = new URL(
+              'service-worker.js',
+              document.baseURI
+            );
+
+            await navigator.serviceWorker.register(workerUrl);
+            console.log('Beercount: Service Worker registrado.');
+          }
+        } catch (error) {
+          console.error(
+            'Beercount: no se pudo registrar el Service Worker.',
+            error
+          );
+        }
+      });
+    }
+  </script>
+
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
