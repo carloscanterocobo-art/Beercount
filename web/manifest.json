@@ -1,6 +1,6 @@
 {
-    "name": "beercount",
-    "short_name": "beercount",
+    "name": "Beercount",
+    "short_name": "Beercount",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

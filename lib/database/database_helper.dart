@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 import '../models/beer_type.dart';
 import '../models/consumption.dart';
@@ -23,6 +25,20 @@ class DatabaseHelper {
 
   /// Abre o crea la base de datos local.
   Future<Database> _initDatabase() async {
+    if (kIsWeb) {
+      return databaseFactoryFfiWeb.openDatabase(
+        'beercount.db',
+        options: OpenDatabaseOptions(
+          version: _databaseVersion,
+          onConfigure: (db) async {
+            await db.execute('PRAGMA foreign_keys = ON');
+          },
+          onCreate: _createDatabase,
+          onUpgrade: _onUpgrade,
+        ),
+      );
+    }
+
     final databasesPath = await getDatabasesPath();
     final path = join(databasesPath, 'beercount.db');
 
